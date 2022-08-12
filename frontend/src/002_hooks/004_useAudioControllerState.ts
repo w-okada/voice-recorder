@@ -11,25 +11,25 @@ export type AudioControllerStateType = typeof AudioControllerStateType[keyof typ
 
 export type AudioControllerState = {
     audioControllerState: AudioControllerStateType
-    tmpMicWavURL: string
-    tmpVfWavURL: string
+    tmpMicWavBlob: Blob | undefined
+    tmpVfWavBlob: Blob | undefined
 }
 export type AudioControllerStateAndMethod = AudioControllerState & {
     setAudioControllerState: (val: AudioControllerStateType) => void
-    setTmpMicWavURL: (val: string) => void
-    setTmpVfWavURL: (val: string) => void
+    setTmpMicWavBlob: (val: Blob | undefined) => void
+    setTmpVfWavBlob: (val: Blob | undefined) => void
 }
 
 export const useAudioControllerState = (): AudioControllerStateAndMethod => {
     const [audioControllerState, setAudioControllerState] = useState<AudioControllerStateType>("stop")
-    const [tmpMicWavURL, setTmpMicWavURL] = useState<string>("");
-    const [tmpVfWavURL, setTmpVfWavURL] = useState<string>("");
+    const [tmpMicWavBlob, setTmpMicWavBlob] = useState<Blob>();
+    const [tmpVfWavBlob, setTmpVfWavBlob] = useState<Blob>();
     return {
         audioControllerState,
-        tmpMicWavURL,
-        tmpVfWavURL,
+        tmpMicWavBlob,
+        tmpVfWavBlob,
         setAudioControllerState,
-        setTmpMicWavURL,
-        setTmpVfWavURL
+        setTmpMicWavBlob,
+        setTmpVfWavBlob
     }
 }

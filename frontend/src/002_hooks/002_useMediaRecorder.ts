@@ -17,9 +17,9 @@ export type MediaRecorderStateAndMethod = MediaRecorderState & {
     startRecord: () => void
     pauseRecord: () => void
     clearRecordedData: () => void
-    getRecordedDataURL: () => {
-        micWavURL: string;
-        vfWavURL: string;
+    getRecordedDataBlobs: () => {
+        micWavBlob: Blob;
+        vfWavBlob: Blob;
     }
 }
 
@@ -79,8 +79,8 @@ class AudioStreamer extends Duplex {
         };
 
 
-        var buffer = new ArrayBuffer(44 + samples.length * 2);
-        var view = new DataView(buffer);
+        const buffer = new ArrayBuffer(44 + samples.length * 2);
+        const view = new DataView(buffer);
 
         writeString(view, 0, 'RIFF');  // RIFFヘッダ
         view.setUint32(4, 32 + samples.length * 2, true); // これ以降のファイルサイズ
@@ -97,15 +97,16 @@ class AudioStreamer extends Duplex {
         view.setUint32(40, samples.length * 2, true); // 波形データのバイト数
         floatTo16BitPCM(view, 44, samples); // 波形データ
         console.log(view)
-        var audioBlob = new Blob([view], { type: 'audio/wav' });
+        const audioBlob = new Blob([view], { type: 'audio/wav' });
+        return audioBlob
 
-        var url = URL.createObjectURL(audioBlob);
-        // var a = document.createElement('a');
-        // a.href = url;
-        // a.download = 'test.wav';
-        // a.click();
-        // return this.chunks
-        return url
+        // var url = URL.createObjectURL(audioBlob);
+        // // var a = document.createElement('a');
+        // // a.href = url;
+        // // a.download = 'test.wav';
+        // // a.click();
+        // // return this.chunks
+        // return url
     }
 
     public _write(chunk: AudioBuffer, _encoding: any, callback: any) {
@@ -135,30 +136,37 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
 
     const [micMediaStream, setMicMediaStream] = useState<MediaStream>()
     const [vfMediaStream, setVfMediaStream] = useState<MediaStream>()
+
+    const micAudioStreamer = useMemo(() => {
+        return new AudioStreamer({ objectMode: true, })
+    }, [])
     const micStream = useMemo(() => {
-        return new MicrophoneStream({
+        const s = new MicrophoneStream({
             objectMode: true,
             bufferSize: 1024,
             context: audioContext
         });
+        s.pipe(micAudioStreamer)
+        return s
+    }, [])
+
+    const vfAudioStreamer = useMemo(() => {
+        return new AudioStreamer({ objectMode: true, })
     }, [])
     const vfStream = useMemo(() => {
-        return new MicrophoneStream({
+        const s = new MicrophoneStream({
             objectMode: true,
             bufferSize: 1024,
             context: audioContext
         })
-    }, [])
-    const micAudioStreamer = useMemo(() => {
-        return new AudioStreamer({ objectMode: true, })
-    }, [])
-    const vfAudioStreamer = useMemo(() => {
-        return new AudioStreamer({ objectMode: true, })
+        s.pipe(vfAudioStreamer)
+        return s
     }, [])
 
 
     const setNewAudioInputDevice = async (deviceId: string) => {
-        console.log("setNewAudioInputDevice")
+        console.log("setNewAudioInputDevice", deviceId)
+
         if (!voiceFocusDeviceTransformer) {
             console.warn("voiceFocusDeviceTransformer is not initialized")
             return
@@ -203,34 +211,30 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         setMicMediaStream(newMicMediaStream)
         setVfMediaStream(outputNode.stream)
 
-        // micStream.stop()
-        // vfStream.stop()
         micStream.setStream(newMicMediaStream)
-        micStream.pipe(micAudioStreamer);
         micStream.pauseRecording()
         vfStream.setStream(outputNode.stream)
-        vfStream.pipe(vfAudioStreamer);
         vfStream.pauseRecording()
     }
 
     const startRecord = () => {
         micAudioStreamer.clearRecordedData()
-        micStream.playRecording()
+        micStream!.playRecording()
         vfAudioStreamer.clearRecordedData()
-        vfStream.playRecording()
+        vfStream!.playRecording()
     }
     const pauseRecord = () => {
-        micStream.pauseRecording()
-        vfStream.pauseRecording()
+        micStream!.pauseRecording()
+        vfStream!.pauseRecording()
     }
     const clearRecordedData = () => {
         micAudioStreamer.clearRecordedData()
         vfAudioStreamer.clearRecordedData()
     }
-    const getRecordedDataURL = () => {
-        const micWavURL = micAudioStreamer.getRecordedData()
-        const vfWavURL = vfAudioStreamer.getRecordedData()
-        return { micWavURL, vfWavURL }
+    const getRecordedDataBlobs = () => {
+        const micWavBlob = micAudioStreamer.getRecordedData()
+        const vfWavBlob = vfAudioStreamer.getRecordedData()
+        return { micWavBlob, vfWavBlob }
     }
 
     const retVal: MediaRecorderStateAndMethod = {
@@ -241,7 +245,7 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         startRecord,
         pauseRecord,
         clearRecordedData,
-        getRecordedDataURL
+        getRecordedDataBlobs
     }
 
     return retVal

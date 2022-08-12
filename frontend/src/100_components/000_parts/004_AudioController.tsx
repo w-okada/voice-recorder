@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useAppState } from "../../003_provider/AppStateProvider";
 import { AudioOutputElementId, generateWavNameForLocalStorage } from "../../const";
 
@@ -17,7 +17,18 @@ type ButtonStates = {
 };
 
 export const AudioController = () => {
-    const { audioControllerState, mediaRecorderState } = useAppState();
+    const { audioControllerState, mediaRecorderState, frontendState, corpusDataState } = useAppState();
+
+    useEffect(() => {
+        if (!frontendState.targetCorpusTitle) {
+            audioControllerState.setTmpMicWavBlob(undefined);
+            audioControllerState.setTmpVfWavBlob(undefined);
+            return;
+        }
+        const { micBlob, vfBlob } = corpusDataState.getWavBlob(frontendState.targetCorpusTitle, frontendState.targetTextIndex);
+        audioControllerState.setTmpMicWavBlob(micBlob);
+        audioControllerState.setTmpVfWavBlob(vfBlob);
+    }, [frontendState.targetTextIndex, frontendState.targetCorpusTitle]);
 
     const { recordButton, stopButton, playButton, keepButton } = useMemo(() => {
         const buttonStates: ButtonStates = {
@@ -34,19 +45,33 @@ export const AudioController = () => {
             case "stop":
                 buttonStates.recordButtonClass = enabledButtonClass;
                 buttonStates.stopButtonClass = activeButtonClass;
-                buttonStates.playButtonClass = enabledButtonClass;
-                buttonStates.keepButtonClass = enabledButtonClass;
+                if (audioControllerState.tmpVfWavBlob) {
+                    buttonStates.playButtonClass = enabledButtonClass;
+                    buttonStates.keepButtonClass = enabledButtonClass;
+                } else {
+                    buttonStates.playButtonClass = disabledButtonClass;
+                    buttonStates.keepButtonClass = disabledButtonClass;
+                }
                 buttonStates.recordAction = () => {
                     audioControllerState.setAudioControllerState("record");
                     mediaRecorderState.startRecord();
                 };
-                buttonStates.playAction = () => {
-                    audioControllerState.setAudioControllerState("play");
-                    const audioElem = document.getElementById(AudioOutputElementId) as HTMLAudioElement;
-                    audioElem.src = audioControllerState.tmpMicWavURL;
-                    audioElem.play();
-                };
-                buttonStates.keepAction = () => {};
+                if (audioControllerState.tmpVfWavBlob) {
+                    buttonStates.playAction = () => {
+                        audioControllerState.setAudioControllerState("play");
+                        const audioElem = document.getElementById(AudioOutputElementId) as HTMLAudioElement;
+                        audioElem.onended = () => {
+                            audioControllerState.setAudioControllerState("stop");
+                        };
+                        audioElem.src = URL.createObjectURL(audioControllerState.tmpVfWavBlob!);
+                        audioElem.currentTime = 0;
+
+                        audioElem.play();
+                    };
+                    buttonStates.keepAction = () => {
+                        corpusDataState.setWavBlob(frontendState.targetCorpusTitle!, frontendState.targetTextIndex, audioControllerState.tmpMicWavBlob, audioControllerState.tmpVfWavBlob);
+                    };
+                }
                 break;
             case "record":
                 buttonStates.recordButtonClass = activeButtonClass;
@@ -56,9 +81,9 @@ export const AudioController = () => {
                 buttonStates.stopAction = () => {
                     audioControllerState.setAudioControllerState("stop");
                     mediaRecorderState.pauseRecord();
-                    const { micWavURL, vfWavURL } = mediaRecorderState.getRecordedDataURL();
-                    audioControllerState.setTmpMicWavURL(micWavURL);
-                    audioControllerState.setTmpVfWavURL(vfWavURL);
+                    const { micWavBlob, vfWavBlob } = mediaRecorderState.getRecordedDataBlobs();
+                    audioControllerState.setTmpMicWavBlob(micWavBlob);
+                    audioControllerState.setTmpVfWavBlob(vfWavBlob);
                 };
                 break;
 
@@ -68,6 +93,9 @@ export const AudioController = () => {
                 buttonStates.playButtonClass = activeButtonClass;
                 buttonStates.keepButtonClass = disabledButtonClass;
                 buttonStates.stopAction = () => {
+                    const audioElem = document.getElementById(AudioOutputElementId) as HTMLAudioElement;
+                    audioElem.pause();
+                    audioElem.currentTime = 0;
                     audioControllerState.setAudioControllerState("stop");
                 };
                 break;
@@ -94,7 +122,7 @@ export const AudioController = () => {
         );
 
         return { recordButton, stopButton, playButton, keepButton };
-    }, [audioControllerState.audioControllerState]);
+    }, [audioControllerState.audioControllerState, audioControllerState.tmpMicWavBlob, audioControllerState.tmpVfWavBlob, frontendState.targetCorpusTitle, frontendState.targetTextIndex, mediaRecorderState.startRecord, mediaRecorderState.pauseRecord]);
 
     return (
         <div className="audio-controller-button-container">

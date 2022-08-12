@@ -6,6 +6,7 @@ import { CorpusSelector } from "./000_parts/002_CorpusSelector";
 import { RecorderCardContainer } from "./000_parts/010-1_RecoderCardContainer";
 import { TextIndexSelector } from "./000_parts/003_TextIndexSelector";
 import { AudioController } from "./000_parts/004_AudioController";
+import { ExportController } from "./000_parts/005_ExportController";
 
 export const Frame = () => {
     const { mediaRecorderState, frontendState } = useAppState();
@@ -63,6 +64,7 @@ export const Frame = () => {
                     <CorpusSelector></CorpusSelector>
                     <TextIndexSelector></TextIndexSelector>
                     <AudioController></AudioController>
+                    <ExportController></ExportController>
                 </div>
                 {/* <div
                     onClick={() => {
