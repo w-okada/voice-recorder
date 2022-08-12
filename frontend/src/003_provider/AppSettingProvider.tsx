@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { ReactNode } from "react";
 import { ApplicationSetting } from "../001_clients_and_managers/000_ApplicationSettingLoader";
 import { useApplicationSettingManager } from "../002_hooks/000_useApplicationSettingManager";
+import { DeviceManagerStateAndMethod, useDeviceManager } from "../002_hooks/001_useDeviceManager";
+import { AudioOutputElementId } from "../const";
 type Props = {
     children: ReactNode;
 };
@@ -21,7 +23,6 @@ export const useAppSetting = (): AppSettingValue => {
 
 export const AppSettingProvider = ({ children }: Props) => {
     const { applicationSetting } = useApplicationSettingManager();
-
     const providerValue = {
         applicationSetting,
     };

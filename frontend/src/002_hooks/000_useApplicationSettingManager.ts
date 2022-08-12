@@ -11,6 +11,7 @@ export const useApplicationSettingManager = () => {
     useEffect(() => {
         const loadApplicationSetting = async () => {
             const setting = await fetchApplicationSetting()
+            console.log(setting)
             setApplicationSetting(setting)
         }
         loadApplicationSetting()

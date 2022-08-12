@@ -17,7 +17,10 @@ export type MediaRecorderStateAndMethod = MediaRecorderState & {
     startRecord: () => void
     pauseRecord: () => void
     clearRecordedData: () => void
-    getRecordedData: () => void
+    getRecordedDataURL: () => {
+        micWavURL: string;
+        vfWavURL: string;
+    }
 }
 
 class AudioStreamer extends Duplex {
@@ -97,24 +100,12 @@ class AudioStreamer extends Duplex {
         var audioBlob = new Blob([view], { type: 'audio/wav' });
 
         var url = URL.createObjectURL(audioBlob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'test.wav';
-        a.click();
-        return this.chunks
-    }
-
-    getRecordedData2 = () => {
-        // const blob = new Blob(this.chunks);
-        const blob = new Blob(this.chunks, {
-            type: 'video/webm'
-        });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'test.wav';
-        a.click();
-        return this.chunks
+        // var a = document.createElement('a');
+        // a.href = url;
+        // a.download = 'test.wav';
+        // a.click();
+        // return this.chunks
+        return url
     }
 
     public _write(chunk: AudioBuffer, _encoding: any, callback: any) {
@@ -191,6 +182,10 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         }
 
         const newMicMediaStream = await navigator.mediaDevices.getUserMedia(constraints)
+        newMicMediaStream.getTracks().forEach(t => {
+            console.log("Capability:", t.getCapabilities())
+            console.log("Constraint:", t.getConstraints())
+        })
         let currentDevice = voiceFocusTransformDevice
         if (!currentDevice) {
             currentDevice = (await voiceFocusDeviceTransformer.createTransformDevice(newMicMediaStream)) || null;
@@ -232,9 +227,10 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         micAudioStreamer.clearRecordedData()
         vfAudioStreamer.clearRecordedData()
     }
-    const getRecordedData = () => {
-        micAudioStreamer.getRecordedData()
-        vfAudioStreamer.getRecordedData()
+    const getRecordedDataURL = () => {
+        const micWavURL = micAudioStreamer.getRecordedData()
+        const vfWavURL = vfAudioStreamer.getRecordedData()
+        return { micWavURL, vfWavURL }
     }
 
     const retVal: MediaRecorderStateAndMethod = {
@@ -245,9 +241,7 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         startRecord,
         pauseRecord,
         clearRecordedData,
-        getRecordedData
-
-
+        getRecordedDataURL
     }
 
     return retVal

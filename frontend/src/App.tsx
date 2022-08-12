@@ -1,13 +1,12 @@
 import React, { useMemo } from "react";
-import { useAppState } from "./003_provider/AppStateProvider";
 import "./100_components/001_css/001_App.css";
 import { Frame } from "./100_components/100_Frame";
 
-// import { library } from "@fortawesome/fontawesome-svg-core";
-// import { fas } from "@fortawesome/free-solid-svg-icons";
-// import { far } from "@fortawesome/free-regular-svg-icons";
-// import { fab } from "@fortawesome/free-brands-svg-icons";
-// library.add(fas, far, fab);
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+library.add(fas, far, fab);
 
 const App = () => {
     const frame = useMemo(() => {

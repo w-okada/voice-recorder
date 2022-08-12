@@ -13,17 +13,20 @@ type DeviceManagerState = {
     audioOutputDevices: DeviceInfo[]
 
     audioInputDeviceId: string | null
+    videoInputDeviceId: string | null
     audioOutputDeviceId: string | null
 }
 export type DeviceManagerStateAndMethod = DeviceManagerState & {
     reloadDevices: () => Promise<void>
     setAudioInputDeviceId: (val: string | null) => void
+    setVideoInputDeviceId: (val: string | null) => void
     setAudioOutputDeviceId: (val: string | null) => void
 
 }
 export const useDeviceManager = (props: UseDeviceManagerProps): DeviceManagerStateAndMethod => {
     const [lastUpdateTime, setLastUpdateTime] = useState(0)
     const [audioInputDeviceId, _setAudioInputDeviceId] = useState<string | null>(null)
+    const [videoInputDeviceId, _setVideoInputDeviceId] = useState<string | null>(null)
     const [audioOutputDeviceId, _setAudioOutputDeviceId] = useState<string | null>(null)
 
     const deviceManager = useMemo(() => {
@@ -54,6 +57,15 @@ export const useDeviceManager = (props: UseDeviceManagerProps): DeviceManagerSta
     }, [])
 
 
+    const setVideoInputDeviceId = async (val: string | null) => {
+        localStorage.videoInputDevice = val;
+        _setVideoInputDeviceId(val)
+    }
+    useEffect(() => {
+        const videoInputDeviceId = localStorage.videoInputDevice || null
+        _setVideoInputDeviceId(videoInputDeviceId)
+    }, [])
+
     const setAudioOutputDeviceId = async (val: string | null) => {
         localStorage.audioOutputDevice = val;
         const outputAudioElement = document.getElementById(props.outputAudioElementId) as HTMLAudioElement;
@@ -66,7 +78,6 @@ export const useDeviceManager = (props: UseDeviceManagerProps): DeviceManagerSta
     useEffect(() => {
         const audioOutputDeviceId = localStorage.audioOutputDevice || null
         const outputAudioElement = document.getElementById(props.outputAudioElementId) as HTMLAudioElement;
-        console.log("audio output", audioOutputDeviceId)
 
         if (audioOutputDeviceId) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -83,9 +94,11 @@ export const useDeviceManager = (props: UseDeviceManagerProps): DeviceManagerSta
         audioOutputDevices: deviceManager.realAudioOutputDevices,
 
         audioInputDeviceId,
+        videoInputDeviceId,
         audioOutputDeviceId,
         reloadDevices,
         setAudioInputDeviceId,
+        setVideoInputDeviceId,
         setAudioOutputDeviceId,
     }
 }

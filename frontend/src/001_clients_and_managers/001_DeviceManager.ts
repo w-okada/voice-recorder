@@ -23,11 +23,13 @@ export class DeviceManager {
 
     // (A) Device List生成
     reloadDevices = async () => {
+        console.warn("Enumeratint device...1")
         try {
             await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         } catch (e) {
             console.warn("Enumerate device error::", e)
         }
+        console.warn("Enumeratint device...2")
         const mediaDeviceInfos = await navigator.mediaDevices.enumerateDevices();
 
         this.realAudioInputDevices = mediaDeviceInfos.filter(x => { return x.kind === "audioinput" }).map(x => { return { label: x.label, deviceId: x.deviceId } })
