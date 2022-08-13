@@ -57,13 +57,13 @@ class AudioStreamer extends Duplex {
             }
         }
 
-        console.log("samples:c2", this.chunks[0][0])
-        console.log("samples:c2", this.chunks[0][1])
-        console.log("samples:c2", this.chunks[0])
-        console.log("samples:s", samples[0])
-        console.log("samples:s", samples[1])
-        console.log("samples:s", samples[2])
-        console.log("samples:s", samples)
+        // console.log("samples:c2", this.chunks[0][0])
+        // console.log("samples:c2", this.chunks[0][1])
+        // console.log("samples:c2", this.chunks[0])
+        // console.log("samples:s", samples[0])
+        // console.log("samples:s", samples[1])
+        // console.log("samples:s", samples[2])
+        // console.log("samples:s", samples)
 
         const writeString = (view: DataView, offset: number, string: string) => {
             for (var i = 0; i < string.length; i++) {

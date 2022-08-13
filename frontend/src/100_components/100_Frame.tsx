@@ -55,17 +55,40 @@ export const Frame = () => {
         waveSurferState.setListener({
             audioprocess: () => {
                 const timeInfos = waveSurferState.getTimeInfos();
-                timeDiv.innerText = `${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                timeDiv.innerText = `Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
             },
             finish: () => {
                 audioControllerState.setAudioControllerState("stop");
             },
             ready: () => {
                 const timeInfos = waveSurferState.getTimeInfos();
-                timeDiv.innerText = `${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                timeDiv.innerText = `Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+            },
+            regionUpdate: (start: number, end: number) => {
+                if (!frontendState.targetCorpusTitle) {
+                    return;
+                }
+                corpusDataState.setRegion(frontendState.targetCorpusTitle, frontendState.targetTextIndex, start, end);
             },
         });
-    }, [waveSurferState.setListener, waveSurferState.getTimeInfos]);
+    }, [waveSurferState.setListener, waveSurferState.getTimeInfos, frontendState.targetCorpusTitle, frontendState.targetTextIndex, corpusDataState.setRegion]);
+
+    useEffect(() => {
+        if (!frontendState.targetCorpusTitle) {
+            return;
+        }
+        const corpus = corpusDataState.corpusTextData[frontendState.targetCorpusTitle];
+        if (!corpus) {
+            return;
+        }
+        const start = corpus.regions[frontendState.targetTextIndex][0];
+        const end = corpus.regions[frontendState.targetTextIndex][1];
+        const dur = end - start;
+
+        const regionTimeDiv = document.getElementById("waveform-region-time") as HTMLDivElement;
+        regionTimeDiv.innerText = `Region:${start.toFixed(2)} - ${end.toFixed(2)} [${dur.toFixed(2)}]`;
+    }, [corpusDataState.corpusTextData, frontendState.targetCorpusTitle, frontendState.targetTextIndex]);
+
     return (
         <div>
             <audio src="" id={AudioOutputElementId}></audio>
@@ -94,7 +117,8 @@ export const Frame = () => {
                 <RecorderCardContainer></RecorderCardContainer>
                 <div className="waveform-container">
                     <div className="waveform-header">
-                        <div id="waveform-time"></div>
+                        <div id="waveform-time" className="waveform-header-item"></div>
+                        <div id="waveform-region-time" className="waveform-header-item"></div>
                     </div>
                     <div id="waveform"></div>
                     <div id="wave-timeline"></div>

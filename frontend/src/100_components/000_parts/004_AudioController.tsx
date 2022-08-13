@@ -35,6 +35,8 @@ export const AudioController = () => {
         } else {
             waveSurferState.emptyMusic();
         }
+        const region = corpusDataState.getRegion(corpusTitle, index);
+        waveSurferState.setRegion(region[0], region[1]);
     };
     useEffect(() => {
         loadStoredRecord(frontendState.targetCorpusTitle, frontendState.targetTextIndex);
@@ -82,7 +84,7 @@ export const AudioController = () => {
                     // バッファ上に音声がある場合。（ローカルストレージ、新録両方。）
                     buttonStates.playAction = () => {
                         audioControllerState.setAudioControllerState("play");
-                        waveSurferState.play();
+                        waveSurferState.playRegion();
                     };
                 }
                 if (audioControllerState.unsavedRecord) {
@@ -111,6 +113,8 @@ export const AudioController = () => {
                     audioControllerState.setTmpVfWavBlob(vfWavBlob);
                     audioControllerState.setUnsavedRecord(true);
                     waveSurferState.loadMusic(vfWavBlob);
+
+                    corpusDataState.setRegion(frontendState.targetCorpusTitle!, frontendState.targetTextIndex, 0, 1);
                 };
                 break;
 

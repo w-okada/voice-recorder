@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchTextResource } from "../001_clients_and_managers/002_ResourceLoader"
 import { useAppSetting } from "../003_provider/AppSettingProvider"
-import { generateWavNameForLocalStorage } from "../const"
+import { generateRegionNameForLocalStorage, generateWavNameForLocalStorage } from "../const"
 
 export type CorpusTextData = {
     "title": string,
@@ -12,6 +12,7 @@ export type CorpusTextData = {
     "text_hira": string[]
     "micWavBlob": (Blob | undefined)[]
     "vfWavBlob": (Blob | undefined)[]
+    "regions": [number, number][]
 }
 
 export type CorpusDataState = {
@@ -23,6 +24,8 @@ export type CorpusDataStateAndMethod = CorpusDataState & {
         micBlob: Blob | undefined;
         vfBlob: Blob | undefined;
     }
+    setRegion: (corpusTitle: string, index: number, start: number, end: number) => Promise<void>
+    getRegion: (corpusTitle: string, index: number) => [number, number]
 }
 
 export const useCorpusData = (): CorpusDataStateAndMethod => {
@@ -44,31 +47,33 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
                 const splitTextHira = textHira.split("\n").filter(x => { return x.length > 0 })
 
                 const micWavBlob: (Blob | undefined)[] = []
+                const regions: [number, number][] = []
                 for (let index = 0; index < splitText.length; index++) {
                     const { micString } = generateWavNameForLocalStorage(x.wavPrefix, index)
                     const obj = await indexedDBState.getItem(micString)
-                    // const json = localStorage[micString]
                     if (!obj) {
                         micWavBlob.push(undefined)
-                        continue
+                    } else {
+                        micWavBlob.push(obj as Blob)
                     }
-                    // const parsed = JSON.parse(json);
-                    // const blob = await fetch(parsed.blob).then(res => res.blob());
-                    micWavBlob.push(obj as Blob)
 
+                    const regionString = generateRegionNameForLocalStorage(x.wavPrefix, index)
+                    const region = await indexedDBState.getItem(regionString)
+                    if (!region) {
+                        regions.push([0, 1])
+                    } else {
+                        regions.push(region as [number, number])
+                    }
                 }
 
                 const vfWavBlob: (Blob | undefined)[] = []
                 for (let index = 0; index < splitText.length; index++) {
                     const { vfString } = generateWavNameForLocalStorage(x.wavPrefix, index)
                     const obj = await indexedDBState.getItem(vfString)
-                    // const json = localStorage[vfString]
                     if (!obj) {
                         vfWavBlob.push(undefined)
                         continue
                     }
-                    // const parsed = JSON.parse(json);
-                    // const blob = await fetch(parsed.blob).then(res => res.blob());
                     vfWavBlob.push(obj as Blob)
                 }
 
@@ -81,7 +86,8 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
                     text: splitText,
                     text_hira: splitTextHira,
                     micWavBlob: micWavBlob,
-                    vfWavBlob: vfWavBlob
+                    vfWavBlob: vfWavBlob,
+                    regions: regions
                 }
                 newCorpusTextData[data.title] = data
             }
@@ -112,9 +118,29 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
         return { micBlob, vfBlob }
     }
 
+    const setRegion = async (corpusTitle: string, index: number, start: number, end: number) => {
+
+        if (!corpusTextData[corpusTitle]) {
+            return
+        }
+        const prefix = corpusTextData[corpusTitle].wavPrefix
+        const regionString = generateRegionNameForLocalStorage(prefix, index)
+        await indexedDBState.setItem(regionString, [start, end])
+        corpusTextData[corpusTitle].regions[index] = [start, end]
+        setCorpusTextData({ ...corpusTextData })
+    }
+    const getRegion = (corpusTitle: string, index: number) => {
+        if (!corpusTextData[corpusTitle]) {
+            return [0, 1] as [number, number]
+        }
+        return corpusTextData[corpusTitle].regions[index]
+    }
+
     return {
         corpusTextData,
         setWavBlob,
-        getWavBlob
+        getWavBlob,
+        setRegion,
+        getRegion
     }
 }
