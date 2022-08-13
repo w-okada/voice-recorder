@@ -48,6 +48,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
             if (ffmpegRef.current) {
                 try {
                     ffmpegRef.current.exit()
+                    ffmpegRef.current = undefined
                 } catch (e) {
                     console.warn("ffmpeg exit", e)
                 }
@@ -64,7 +65,6 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
             // });
             console.log("ffmpeg is loaded!")
             ffmpegRef.current = ffmpeg
-
         }
         ffmpegCount.current++;
 
