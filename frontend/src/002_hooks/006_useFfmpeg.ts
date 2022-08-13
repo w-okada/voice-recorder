@@ -52,6 +52,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
                 } catch (e) {
                     console.warn("ffmpeg exit", e)
                 }
+                ffmpegRef.current = undefined
             }
             // upload
             const ffmpeg = createFFmpeg({
