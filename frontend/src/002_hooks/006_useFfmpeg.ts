@@ -45,6 +45,8 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         await ffmpeg.run(...cliArgs);
         const data = ffmpeg.FS("readFile", outputFileName);
         const blob = new Blob([data.buffer], { type: outputType })
+        ffmpeg.FS("unlink", inputFileName)
+        ffmpeg.FS("unlink", outputFileName)
         return blob
     }
 
