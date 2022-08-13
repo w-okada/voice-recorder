@@ -14,7 +14,7 @@ export type FfmpegStateAndMethod = FfmpegState & {
 export const useFfmepg = (): FfmpegStateAndMethod => {
     const [progress, setProgress] = useState<number>(0)
     const [isFfmpegLoaded, setIsFfmpegLoaded] = useState<boolean>(false)
-    const ffmpeg2 = useMemo(() => {
+    const ffmpeg = useMemo(() => {
         const ffmpeg = createFFmpeg({
             log: true,
             corePath: "./ffmpeg/ffmpeg-core.js",
@@ -39,17 +39,6 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
     // [!! 注意 !!] optionStringはffmpegを入れない。純粋にオプション文字列。
     // outputTypeは"audio/wav" など。
     const exec = async (optionString: string, inputFileName: string, outputFileName: string, inputFile: Blob, outputType: string) => {
-        const ffmpeg = createFFmpeg({
-            log: true,
-            corePath: "./ffmpeg/ffmpeg-core.js",
-        });
-        await ffmpeg!.load();
-        ffmpeg!.setProgress(({ ratio }) => {
-            console.log("progress:", ratio);
-            setProgress(ratio);
-        });
-        console.log("ffmpeg is loaded!")
-
         // upload
         ffmpeg.FS("writeFile", inputFileName, await fetchFile(inputFile));
         const cliArgs = optionString.split(" ");
@@ -58,7 +47,6 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         const blob = new Blob([data.buffer], { type: outputType })
         ffmpeg.FS("unlink", inputFileName)
         ffmpeg.FS("unlink", outputFileName)
-        ffmpeg.exit()
         return blob
     }
 
