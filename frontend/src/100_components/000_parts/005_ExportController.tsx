@@ -27,7 +27,7 @@ export const ExportController = () => {
                 continue;
             }
             const fileName = generateWavFileName(prefix, i);
-            zip.file(`raw/${fileName}`, blob);
+            // zip.file(`raw/${fileName}`, blob);
             processedNum += 1;
             setProcessdNum(processedNum);
 
@@ -35,13 +35,13 @@ export const ExportController = () => {
             const dur = corpus.regions[i][1] - corpus.regions[i][0];
             const trimOptions = `-ss ${start} -i in.wav -t ${dur} out.wav`;
             const trimedBlob = await ffmpegState.exec(trimOptions, "in.wav", "out.wav", blob, "audio/wav");
-            zip.file(`rawTrimed/${fileName}`, trimedBlob);
+            // zip.file(`rawTrimed/${fileName}`, trimedBlob);
             processedNum += 1;
             setProcessdNum(processedNum);
 
             const options = `-i in.wav -ar 24000 out.wav`;
             const newBlob = await ffmpegState.exec(options, "in.wav", "out.wav", trimedBlob, "audio/wav");
-            zip.file(`raw24k/${fileName}`, newBlob);
+            // zip.file(`raw24k/${fileName}`, newBlob);
             processedNum += 1;
             setProcessdNum(processedNum);
         }
