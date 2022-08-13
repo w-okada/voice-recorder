@@ -63,6 +63,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
             });
             console.log("ffmpeg is loaded!")
             ffmpegRef.current = ffmpeg
+            ffmpegCount.current = 0
         }
         ffmpegCount.current++;
 
