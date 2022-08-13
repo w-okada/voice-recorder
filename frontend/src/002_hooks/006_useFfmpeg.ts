@@ -50,7 +50,6 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         });
         console.log("ffmpeg is loaded!")
 
-
         // upload
         ffmpeg.FS("writeFile", inputFileName, await fetchFile(inputFile));
         const cliArgs = optionString.split(" ");
@@ -59,6 +58,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         const blob = new Blob([data.buffer], { type: outputType })
         ffmpeg.FS("unlink", inputFileName)
         ffmpeg.FS("unlink", outputFileName)
+        ffmpeg.exit()
         return blob
     }
 
