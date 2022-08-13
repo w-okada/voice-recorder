@@ -18,7 +18,7 @@ const AppStateProviderWrapper = () => {
                         <a href="https://github.com/isletennos/MMVC_Trainer" target="_blank">
                             MMVC
                         </a>
-                        での使用を想定しているため、44100Hz, 16bitの録音設定になっています（時間に余裕があればバリエーション増やすかも）。
+                        での使用を想定しているため、44800Hz, 16bitの録音設定になっています（時間に余裕があればバリエーション増やすかも）。エクスポート時に内部で24000Hzに変換します。
                     </p>
                     <p>完全にクライアント上で動きます。サーバへのデータアップロードは行いません。</p>
                     <p>

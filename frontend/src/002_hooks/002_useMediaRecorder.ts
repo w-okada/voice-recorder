@@ -3,8 +3,8 @@ import { useMemo, useState } from "react";
 import { Duplex, DuplexOptions } from "readable-stream";
 import MicrophoneStream from "microphone-stream";
 
-const SampleRate = 44100
-// const SampleRate = 48000
+// const SampleRate = 44100
+const SampleRate = 48000
 
 
 export type MediaRecorderState = {
@@ -165,7 +165,7 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         console.log("setNewAudioInputDevice", deviceId)
         let vf = voiceFocusDeviceTransformer
         if (!vf) {
-            vf = await VoiceFocusDeviceTransformer.create()
+            vf = await VoiceFocusDeviceTransformer.create({ variant: 'c20' })
             setVoiceFocusDeviceTransformer(vf)
         }
         if (micMediaStream) {

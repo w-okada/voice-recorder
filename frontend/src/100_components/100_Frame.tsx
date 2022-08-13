@@ -77,7 +77,7 @@ export const Frame = () => {
                 <div className="header-device-selector-container">
                     <div className="header-device-selector-text">Mic:</div>
                     <DeviceSelector deviceType={"audioinput"}></DeviceSelector>
-                    <div className="header-device-selector-text">Sample Rate:44100Hz</div>
+                    <div className="header-device-selector-text">Sample Rate:48000Hz</div>
                     <div className="header-device-selector-text">Sample Depth:16bit</div>
                     <div className="header-device-selector-text">Speaker:</div>
                     <DeviceSelector deviceType={"audiooutput"}></DeviceSelector>
