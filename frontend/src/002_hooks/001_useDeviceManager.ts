@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from "react"
 import { DeviceInfo, DeviceManager } from "../001_clients_and_managers/001_DeviceManager"
 
 
-export type UseDeviceManagerProps = {
-    outputAudioElementId: string
-}
 
 type DeviceManagerState = {
     lastUpdateTime: number
@@ -23,7 +20,7 @@ export type DeviceManagerStateAndMethod = DeviceManagerState & {
     setAudioOutputDeviceId: (val: string | null) => void
 
 }
-export const useDeviceManager = (props: UseDeviceManagerProps): DeviceManagerStateAndMethod => {
+export const useDeviceManager = (): DeviceManagerStateAndMethod => {
     const [lastUpdateTime, setLastUpdateTime] = useState(0)
     const [audioInputDeviceId, _setAudioInputDeviceId] = useState<string | null>(null)
     const [videoInputDeviceId, _setVideoInputDeviceId] = useState<string | null>(null)
@@ -68,22 +65,24 @@ export const useDeviceManager = (props: UseDeviceManagerProps): DeviceManagerSta
 
     const setAudioOutputDeviceId = async (val: string | null) => {
         localStorage.audioOutputDevice = val;
-        const outputAudioElement = document.getElementById(props.outputAudioElementId) as HTMLAudioElement;
-
+        // !!! migrate to waveform !!!
+        // const outputAudioElement = document.getElementById(props.outputAudioElementId) as HTMLAudioElement;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        outputAudioElement.setSinkId(val)
+        // outputAudioElement.setSinkId(val)
+
         _setAudioOutputDeviceId(val)
     }
     useEffect(() => {
         const audioOutputDeviceId = localStorage.audioOutputDevice || null
-        const outputAudioElement = document.getElementById(props.outputAudioElementId) as HTMLAudioElement;
+        // !!! migrate to waveform !!!
+        // const outputAudioElement = document.getElementById(props.outputAudioElementId) as HTMLAudioElement;
 
-        if (audioOutputDeviceId) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            outputAudioElement.setSinkId(audioOutputDeviceId)
-        }
+        // if (audioOutputDeviceId) {
+        //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //     // @ts-ignore
+        //     outputAudioElement.setSinkId(audioOutputDeviceId)
+        // }
         _setAudioOutputDeviceId(audioOutputDeviceId)
     }, [])
 

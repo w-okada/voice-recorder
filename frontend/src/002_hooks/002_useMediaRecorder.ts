@@ -126,9 +126,6 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         return new AudioContext({ sampleRate: SampleRate });
     }, [])
     const [voiceFocusDeviceTransformer, setVoiceFocusDeviceTransformer] = useState<VoiceFocusDeviceTransformer>();
-    useEffect(() => {
-        VoiceFocusDeviceTransformer.create().then(t => { setVoiceFocusDeviceTransformer(t) })
-    }, [])
     const [voiceFocusTransformDevice, setVoiceFocusTransformDevice] = useState<VoiceFocusTransformDevice | null>(null)
     const outputNode = useMemo(() => {
         return audioContext.createMediaStreamDestination();
@@ -166,10 +163,10 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
 
     const setNewAudioInputDevice = async (deviceId: string) => {
         console.log("setNewAudioInputDevice", deviceId)
-
-        if (!voiceFocusDeviceTransformer) {
-            console.warn("voiceFocusDeviceTransformer is not initialized")
-            return
+        let vf = voiceFocusDeviceTransformer
+        if (!vf) {
+            vf = await VoiceFocusDeviceTransformer.create()
+            setVoiceFocusDeviceTransformer(vf)
         }
         if (micMediaStream) {
             micMediaStream.getTracks().forEach(x => {
@@ -190,13 +187,13 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         }
 
         const newMicMediaStream = await navigator.mediaDevices.getUserMedia(constraints)
-        newMicMediaStream.getTracks().forEach(t => {
-            console.log("Capability:", t.getCapabilities())
-            console.log("Constraint:", t.getConstraints())
-        })
+        // newMicMediaStream.getTracks().forEach(t => {
+        //     console.log("Capability:", t.getCapabilities())
+        //     console.log("Constraint:", t.getConstraints())
+        // })
         let currentDevice = voiceFocusTransformDevice
         if (!currentDevice) {
-            currentDevice = (await voiceFocusDeviceTransformer.createTransformDevice(newMicMediaStream)) || null;
+            currentDevice = (await vf.createTransformDevice(newMicMediaStream)) || null;
             setVoiceFocusTransformDevice(currentDevice)
         } else {
             currentDevice.chooseNewInnerDevice(newMicMediaStream)
@@ -218,6 +215,7 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
     }
 
     const startRecord = () => {
+        console.log("start record")
         micAudioStreamer.clearRecordedData()
         micStream!.playRecording()
         vfAudioStreamer.clearRecordedData()

@@ -9,7 +9,7 @@ import { AudioController } from "./000_parts/004_AudioController";
 import { ExportController } from "./000_parts/005_ExportController";
 
 export const Frame = () => {
-    const { corpusDataState, frontendState, audioControllerState } = useAppState();
+    const { corpusDataState, frontendState, audioControllerState, waveSurferState } = useAppState();
 
     useEffect(() => {
         const keyDownHandler = (ev: KeyboardEvent) => {
@@ -50,7 +50,22 @@ export const Frame = () => {
             document.removeEventListener("keydown", keyDownHandler);
         };
     }, [frontendState.targetTextIndex, audioControllerState.unsavedRecord, audioControllerState.audioControllerState]);
-
+    useEffect(() => {
+        const timeDiv = document.getElementById("waveform-time") as HTMLDivElement;
+        waveSurferState.setListener({
+            audioprocess: () => {
+                const timeInfos = waveSurferState.getTimeInfos();
+                timeDiv.innerText = `${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+            },
+            finish: () => {
+                audioControllerState.setAudioControllerState("stop");
+            },
+            ready: () => {
+                const timeInfos = waveSurferState.getTimeInfos();
+                timeDiv.innerText = `${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+            },
+        });
+    }, [waveSurferState.setListener, waveSurferState.getTimeInfos]);
     return (
         <div>
             <audio src="" id={AudioOutputElementId}></audio>
@@ -76,23 +91,14 @@ export const Frame = () => {
                     <AudioController></AudioController>
                     <ExportController></ExportController>
                 </div>
-                {/* <div
-                    onClick={() => {
-                        mediaRecorderState.startRecord();
-                    }}
-                    style={{ color: "#f00" }}
-                >
-                    start
-                </div>
-                <div
-                    onClick={() => {
-                        mediaRecorderState.pauseRecord();
-                        mediaRecorderState.getRecordedData();
-                    }}
-                >
-                    stop
-                </div> */}
                 <RecorderCardContainer></RecorderCardContainer>
+                <div className="waveform-container">
+                    <div className="waveform-header">
+                        <div id="waveform-time"></div>
+                    </div>
+                    <div id="waveform"></div>
+                    <div id="wave-timeline"></div>
+                </div>
             </div>
         </div>
     );

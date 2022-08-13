@@ -71,7 +71,19 @@ body {
 /*  */
 /*  */
 /*  */
-/*  */
+/* start button */
+.start-button {
+    font-size: 4rem;
+    border: 3px solid #333;
+    background: #eef;
+    width: 500px;
+    padding: 15px;
+    cursor: pointer;
+    text-align: center;
+    margin: 200px auto;
+    user-select: none;
+}
+
 /* Header */
 
 .header {
@@ -261,10 +273,24 @@ body {
 .recorder-card-text {
     font-size: 1.7rem;
     padding: 4px 10px 4px 10px;
-    color: #644;
+    color: #c44;
 }
 .recorder-card-text_hira {
     font-size: 1.7rem;
     padding: 4px 10px 4px 10px;
-    color: #644;
+    color: #477;
+}
+
+/*  */
+/*  */
+/*  */
+.waveform-container {
+    width: 500px;
+    box-sizing: content-box;
+    /* border: 1px solid #aaa; */
+    margin: 20px auto;
+    /* padding: 30px; */
+    background: #fff;
+}
+.waveform-header {
 }

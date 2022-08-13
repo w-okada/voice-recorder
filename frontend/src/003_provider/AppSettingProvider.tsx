@@ -12,6 +12,7 @@ type Props = {
 type AppSettingValue = {
     applicationSetting: ApplicationSetting | null;
     indexedDBState: IndexedDBStateAndMethod;
+    deviceManagerState: DeviceManagerStateAndMethod;
 };
 
 const AppSettingContext = React.createContext<AppSettingValue | null>(null);
@@ -26,9 +27,12 @@ export const useAppSetting = (): AppSettingValue => {
 export const AppSettingProvider = ({ children }: Props) => {
     const { applicationSetting } = useApplicationSettingManager();
     const indexedDBState = useIndexedDB();
+    const deviceManagerState = useDeviceManager();
+
     const providerValue = {
         applicationSetting,
         indexedDBState,
+        deviceManagerState,
     };
     return <AppSettingContext.Provider value={providerValue}>{children}</AppSettingContext.Provider>;
 };

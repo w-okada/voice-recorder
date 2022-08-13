@@ -5,7 +5,7 @@ export const CorpusSelector = () => {
     const { corpusDataState, frontendState } = useAppState();
 
     const options = useMemo(() => {
-        console.log("Corpus data:", corpusDataState.corpusTextData);
+        // console.log("Corpus data:", corpusDataState.corpusTextData);
         const options = Object.keys(corpusDataState.corpusTextData).map((title) => {
             return (
                 <option className="corpus-selector-option" key={title} value={title}>

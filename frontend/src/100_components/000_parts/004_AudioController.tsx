@@ -21,7 +21,7 @@ type ButtonStates = {
 };
 
 export const AudioController = () => {
-    const { audioControllerState, mediaRecorderState, frontendState, corpusDataState } = useAppState();
+    const { audioControllerState, mediaRecorderState, frontendState, corpusDataState, waveSurferState } = useAppState();
 
     const loadStoredRecord = (corpusTitle: string | undefined, index: number) => {
         if (!corpusTitle) {
@@ -32,6 +32,11 @@ export const AudioController = () => {
         const { micBlob, vfBlob } = corpusDataState.getWavBlob(corpusTitle, index);
         audioControllerState.setTmpMicWavBlob(micBlob);
         audioControllerState.setTmpVfWavBlob(vfBlob);
+        if (vfBlob) {
+            waveSurferState.loadMusic(vfBlob);
+        } else {
+            waveSurferState.emptyMusic();
+        }
     };
     useEffect(() => {
         loadStoredRecord(frontendState.targetCorpusTitle, frontendState.targetTextIndex);
@@ -79,14 +84,7 @@ export const AudioController = () => {
                     // バッファ上に音声がある場合。（ローカルストレージ、新録両方。）
                     buttonStates.playAction = () => {
                         audioControllerState.setAudioControllerState("play");
-                        const audioElem = document.getElementById(AudioOutputElementId) as HTMLAudioElement;
-                        audioElem.onended = () => {
-                            audioControllerState.setAudioControllerState("stop");
-                        };
-                        audioElem.src = URL.createObjectURL(audioControllerState.tmpVfWavBlob!);
-                        audioElem.currentTime = 0;
-
-                        audioElem.play();
+                        waveSurferState.play();
                     };
                 }
                 if (audioControllerState.unsavedRecord) {
@@ -114,6 +112,7 @@ export const AudioController = () => {
                     audioControllerState.setTmpMicWavBlob(micWavBlob);
                     audioControllerState.setTmpVfWavBlob(vfWavBlob);
                     audioControllerState.setUnsavedRecord(true);
+                    waveSurferState.loadMusic(vfWavBlob);
                 };
                 break;
 
@@ -124,9 +123,7 @@ export const AudioController = () => {
                 buttonStates.keepButtonClass = disabledButtonClass;
                 buttonStates.dismissButtonClass = disabledButtonClass;
                 buttonStates.stopAction = () => {
-                    const audioElem = document.getElementById(AudioOutputElementId) as HTMLAudioElement;
-                    audioElem.pause();
-                    audioElem.currentTime = 0;
+                    waveSurferState.stop();
                     audioControllerState.setAudioControllerState("stop");
                 };
                 break;

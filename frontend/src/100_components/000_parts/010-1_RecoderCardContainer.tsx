@@ -12,7 +12,6 @@ export const RecorderCardContainer = () => {
         }
         const corpus = corpusDataState.corpusTextData[frontendState.targetCorpusTitle];
         const textSize = corpus.text.length;
-        console.log("TEXT_SIZE:::", textSize);
         const cards = [...Array(textSize)].map((_, index) => {
             return <RecorderCard key={index} index={index}></RecorderCard>;
         });

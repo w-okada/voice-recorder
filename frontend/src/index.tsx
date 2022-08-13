@@ -5,18 +5,25 @@ import { AppStateProvider } from "./003_provider/AppStateProvider";
 import { AppSettingProvider, useAppSetting } from "./003_provider/AppSettingProvider";
 
 const AppStateProviderWrapper = () => {
-    const { applicationSetting } = useAppSetting();
+    const { applicationSetting, deviceManagerState } = useAppSetting();
     const [firstTach, setFirstTouch] = React.useState<boolean>(false);
     if (!applicationSetting || !firstTach) {
         return (
             <>
                 <div
+                    className="start-button"
                     onClick={() => {
                         setFirstTouch(true);
                     }}
                 >
-                    Start
+                    Click to start
                 </div>
+            </>
+        );
+    } else if (deviceManagerState.audioInputDevices.length === 0) {
+        return (
+            <>
+                <div className="start-button">Loading Devices...</div>
             </>
         );
     } else {

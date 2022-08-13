@@ -81,7 +81,7 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
                     vfWavBlob.push(obj as Blob)
                 }
 
-                console.log("vfWavURL:", vfWavBlob)
+                // console.log("vfWavURL:", vfWavBlob)
                 const data: CorpusTextData = {
                     title: x.title,
                     wavPrefix: x.wavPrefix,
