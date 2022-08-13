@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
+import { useMemo, useRef, useState } from "react";
+import { createFFmpeg, fetchFile, FFmpeg } from "@ffmpeg/ffmpeg";
 
 
 
@@ -14,7 +14,7 @@ export type FfmpegStateAndMethod = FfmpegState & {
 export const useFfmepg = (): FfmpegStateAndMethod => {
     const [progress, setProgress] = useState<number>(0)
     const [isFfmpegLoaded, setIsFfmpegLoaded] = useState<boolean>(false)
-    const ffmpeg2 = useMemo(() => {
+    const ffmpeg = useMemo(() => {
         const ffmpeg = createFFmpeg({
             log: true,
             corePath: "./ffmpeg/ffmpeg-core.js",
@@ -32,6 +32,9 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         return ffmpeg
     }, [])
 
+    const ffmpegRef = useRef<FFmpeg>()
+    const ffmpegCount = useRef<number>(0)
+
 
     // emscriptenのファイルシステムにファイルを乗っける時に、ファイル名が必要なので、
     // オプション内に記載されているファイル名を第2、第3引数で渡す。
@@ -39,18 +42,29 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
     // [!! 注意 !!] optionStringはffmpegを入れない。純粋にオプション文字列。
     // outputTypeは"audio/wav" など。
     const exec = async (optionString: string, inputFileName: string, outputFileName: string, inputFile: Blob, outputType: string) => {
-        // upload
-        const ffmpeg = createFFmpeg({
-            log: true,
-            corePath: "./ffmpeg/ffmpeg-core.js",
-        });
-        await ffmpeg!.load();
-        ffmpeg!.setProgress(({ ratio }) => {
-            console.log("progress:", ratio);
-            setProgress(ratio);
-        });
-        console.log("ffmpeg is loaded!")
-
+        if (!ffmpegRef.current || ffmpegCount.current > 100) {
+            console.log("FFMPEG_RENEW!!")
+            if (ffmpegRef.current) {
+                try {
+                    ffmpegRef.current.exit()
+                } catch (e) {
+                    console.warn("ffmpeg exit", e)
+                }
+            }
+            // upload
+            const ffmpeg = createFFmpeg({
+                log: true,
+                corePath: "./ffmpeg/ffmpeg-core.js",
+            });
+            await ffmpeg!.load();
+            ffmpeg!.setProgress(({ ratio }) => {
+                console.log("progress:", ratio);
+                setProgress(ratio);
+            });
+            console.log("ffmpeg is loaded!")
+            ffmpegRef.current = ffmpeg
+        }
+        ffmpegCount.current++;
 
         ffmpeg.FS("writeFile", inputFileName, await fetchFile(inputFile));
         const cliArgs = optionString.split(" ");
@@ -59,11 +73,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         const blob = new Blob([data.buffer], { type: outputType })
         ffmpeg.FS("unlink", inputFileName)
         ffmpeg.FS("unlink", outputFileName)
-        try {
-            ffmpeg.exit()
-        } catch (e) {
-            console.warn("ffmpeg:", e)
-        }
+
         return blob
     }
 
