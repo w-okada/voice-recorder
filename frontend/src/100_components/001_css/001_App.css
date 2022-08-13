@@ -72,7 +72,29 @@ body {
 /*  */
 /*  */
 /* start button */
-.start-button {
+.front-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+.front-title {
+    font-size: 4rem;
+}
+.front-description {
+    font-size: 0.8rem;
+    text-align: center;
+}
+.front-description-img {
+    height: 2rem;
+}
+.front-description-strong {
+    color: #f66;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.front-start-button {
     font-size: 4rem;
     border: 3px solid #333;
     background: #eef;
@@ -80,8 +102,11 @@ body {
     padding: 15px;
     cursor: pointer;
     text-align: center;
-    margin: 200px auto;
+    margin: 100px auto;
     user-select: none;
+}
+.front-disclaimer {
+    font-size: 0.8rem;
 }
 
 /* Header */

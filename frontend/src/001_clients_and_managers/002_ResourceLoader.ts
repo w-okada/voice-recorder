@@ -1,5 +1,5 @@
 
-export const fetchTextResource = async (url): Promise<string> => {
+export const fetchTextResource = async (url: string): Promise<string> => {
     const res = await fetch(url, {
         method: "GET"
     });

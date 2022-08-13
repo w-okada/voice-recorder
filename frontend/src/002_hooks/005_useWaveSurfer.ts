@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js"
-import WaveSurferTimeline from "wavesurfer.js/dist/plugin/wavesurfer.timeline"
+import TimelinePlugin from "wavesurfer.js/src/plugin/timeline";
 import { useAppSetting } from "../003_provider/AppSettingProvider";
 export type WaveSurferState = {
     dummy: string
@@ -26,34 +26,35 @@ export type WaveSurferListener = {
 
 export const useWaveSurfer = (): WaveSurferStateAndMethod => {
     const { deviceManagerState } = useAppSetting()
-    const waveSurferRef = useRef<any>()
-    const [waveSurfer, setWaveSurfer] = useState<any>()
+    const waveSurferRef = useRef<WaveSurfer>()
+    const [waveSurfer, setWaveSurfer] = useState<WaveSurfer>()
     useEffect(() => {
-        // @ts-ignore
         waveSurferRef.current = WaveSurfer.create({
             container: '#waveform',
             plugins: [
-                WaveSurferTimeline.create({
+                TimelinePlugin.create({
                     container: "#wave-timeline",
-                    primaryLabelInterval: 1,
-                    secondaryLabelInterval: 0.5,
-
+                    primaryLabelInterval: (_pxPerSec: number) => { return 2 },
+                    secondaryLabelInterval: (_pxPerSec: number) => { return 1 },
+                    primaryFontColor: "#f00",
+                    // secondaryFontColor: "#0f0",
+                    fontSize: 20
                 })
             ]
         })
         setWaveSurfer(waveSurferRef.current)
     }, [])
     const loadMusic = (blob: Blob) => {
-        waveSurfer.loadBlob(blob);
+        waveSurfer!.loadBlob(blob);
     }
     const emptyMusic = () => {
-        waveSurfer.empty()
+        waveSurfer!.empty()
     }
     const play = () => {
-        waveSurfer.play()
+        waveSurfer!.play()
     }
     const stop = () => {
-        waveSurfer.stop()
+        waveSurfer!.stop()
     }
 
     const setListener = (l: WaveSurferListener) => {

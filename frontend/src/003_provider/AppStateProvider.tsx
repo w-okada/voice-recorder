@@ -1,12 +1,11 @@
 import React, { useContext, useEffect } from "react";
 import { ReactNode } from "react";
-import { DeviceManagerStateAndMethod, useDeviceManager } from "../002_hooks/001_useDeviceManager";
+import { DeviceManagerStateAndMethod } from "../002_hooks/001_useDeviceManager";
 import { MediaRecorderStateAndMethod, useMediaRecorder } from "../002_hooks/002_useMediaRecorder";
 import { CorpusDataStateAndMethod, useCorpusData } from "../002_hooks/003_useCorpusData";
 import { AudioControllerStateAndMethod, useAudioControllerState } from "../002_hooks/004_useAudioControllerState";
 import { useWaveSurfer, WaveSurferStateAndMethod } from "../002_hooks/005_useWaveSurfer";
 import { FrontendStateAndMethod, useFrontendState } from "../002_hooks/100_useFrontendState";
-import { AudioOutputElementId } from "../const";
 import { useAppSetting } from "./AppSettingProvider";
 
 type Props = {

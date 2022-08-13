@@ -1,5 +1,5 @@
 import { VoiceFocusDeviceTransformer, VoiceFocusTransformDevice } from "amazon-chime-sdk-js";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Duplex, DuplexOptions } from "readable-stream";
 import MicrophoneStream from "microphone-stream";
 
@@ -65,13 +65,13 @@ class AudioStreamer extends Duplex {
         console.log("samples:s", samples[2])
         console.log("samples:s", samples)
 
-        const writeString = (view, offset, string) => {
+        const writeString = (view: DataView, offset: number, string: string) => {
             for (var i = 0; i < string.length; i++) {
                 view.setUint8(offset + i, string.charCodeAt(i));
             }
         };
 
-        const floatTo16BitPCM = (output, offset, input) => {
+        const floatTo16BitPCM = (output: DataView, offset: number, input: Float32Array) => {
             for (var i = 0; i < input.length; i++, offset += 2) {
                 var s = Math.max(-1, Math.min(1, input[i]));
                 output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);

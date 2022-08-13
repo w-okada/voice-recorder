@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, useState } from "react";
+import React, { Suspense, useMemo } from "react";
 import { useAppState } from "../../003_provider/AppStateProvider";
 
 export const DeviceType = {

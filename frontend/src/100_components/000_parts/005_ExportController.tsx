@@ -1,10 +1,10 @@
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useAppState } from "../../003_provider/AppStateProvider";
-import { AudioOutputElementId, generateWavFileName, generateWavNameForLocalStorage } from "../../const";
+import { generateWavFileName } from "../../const";
 import JSZip from "jszip";
 
 export const ExportController = () => {
-    const { audioControllerState, mediaRecorderState, frontendState, corpusDataState } = useAppState();
+    const { frontendState, corpusDataState } = useAppState();
     const exportWav = async () => {
         if (!frontendState.targetCorpusTitle) {
             return;
