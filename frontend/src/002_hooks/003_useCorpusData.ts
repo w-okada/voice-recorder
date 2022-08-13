@@ -26,7 +26,7 @@ export type CorpusDataStateAndMethod = CorpusDataState & {
 }
 
 export const useCorpusData = (): CorpusDataStateAndMethod => {
-    const { applicationSetting } = useAppSetting()
+    const { applicationSetting, indexedDBState } = useAppSetting()
     const textSettings = applicationSetting?.text
     const [corpusTextData, setCorpusTextData] = useState<{ [title: string]: CorpusTextData }>({})
 
@@ -55,28 +55,30 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
                 const micWavBlob: (Blob | undefined)[] = []
                 for (let index = 0; index < splitText.length; index++) {
                     const { micString } = generateWavNameForLocalStorage(x.wavPrefix, index)
-                    const json = localStorage[micString]
-                    if (!json) {
+                    const obj = await indexedDBState.getItem(micString)
+                    // const json = localStorage[micString]
+                    if (!obj) {
                         micWavBlob.push(undefined)
                         continue
                     }
-                    const parsed = JSON.parse(json);
-                    const blob = await fetch(parsed.blob).then(res => res.blob());
-                    micWavBlob.push(blob)
+                    // const parsed = JSON.parse(json);
+                    // const blob = await fetch(parsed.blob).then(res => res.blob());
+                    micWavBlob.push(obj as Blob)
 
                 }
 
                 const vfWavBlob: (Blob | undefined)[] = []
                 for (let index = 0; index < splitText.length; index++) {
                     const { vfString } = generateWavNameForLocalStorage(x.wavPrefix, index)
-                    const json = localStorage[vfString]
-                    if (!json) {
+                    const obj = await indexedDBState.getItem(vfString)
+                    // const json = localStorage[vfString]
+                    if (!obj) {
                         vfWavBlob.push(undefined)
                         continue
                     }
-                    const parsed = JSON.parse(json);
-                    const blob = await fetch(parsed.blob).then(res => res.blob());
-                    vfWavBlob.push(blob)
+                    // const parsed = JSON.parse(json);
+                    // const blob = await fetch(parsed.blob).then(res => res.blob());
+                    vfWavBlob.push(obj as Blob)
                 }
 
                 console.log("vfWavURL:", vfWavBlob)
@@ -101,11 +103,14 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
     const setWavBlob = async (corpusTitle: string, index: number, micBlob: Blob | undefined, vfBlob: Blob | undefined) => {
         const prefix = corpusTextData[corpusTitle].wavPrefix
         const { micString, vfString } = generateWavNameForLocalStorage(prefix, index)
-        const micB64 = await blobToBase64(micBlob)
-        console.log("MIC", micBlob, micB64)
-        localStorage[micString] = JSON.stringify({ blob: micB64 })
-        const vfB64 = await blobToBase64(vfBlob)
-        localStorage[vfString] = JSON.stringify({ blob: vfB64 })
+        // const micB64 = await blobToBase64(micBlob)
+        // console.log("MIC", micBlob, micB64)
+        // localStorage[micString] = JSON.stringify({ blob: micB64 })
+        await indexedDBState.setItem(micString, micBlob)
+
+        // const vfB64 = await blobToBase64(vfBlob)
+        // localStorage[vfString] = JSON.stringify({ blob: vfB64 })
+        await indexedDBState.setItem(vfString, vfBlob)
         corpusTextData[corpusTitle].micWavBlob[index] = micBlob
         corpusTextData[corpusTitle].vfWavBlob[index] = vfBlob
         setCorpusTextData({ ...corpusTextData })

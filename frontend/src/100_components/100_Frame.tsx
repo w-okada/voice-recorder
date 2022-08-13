@@ -9,7 +9,7 @@ import { AudioController } from "./000_parts/004_AudioController";
 import { ExportController } from "./000_parts/005_ExportController";
 
 export const Frame = () => {
-    const { mediaRecorderState, frontendState } = useAppState();
+    const { corpusDataState, frontendState } = useAppState();
 
     useEffect(() => {
         const keyDownHandler = (ev: KeyboardEvent) => {
@@ -18,11 +18,18 @@ export const Frame = () => {
             switch (key) {
                 case "ArrowUp":
                 case "ArrowLeft":
-                    frontendState.setTargetTextIndex(frontendState.targetTextIndex - 1);
+                    if (frontendState.targetTextIndex > 0) {
+                        frontendState.setTargetTextIndex(frontendState.targetTextIndex - 1);
+                    }
                     return;
                 case "ArrowDown":
                 case "ArrowRight":
-                    frontendState.setTargetTextIndex(frontendState.targetTextIndex + 1);
+                    if (!frontendState.targetCorpusTitle) {
+                        return;
+                    }
+                    if (frontendState.targetTextIndex < corpusDataState.corpusTextData[frontendState.targetCorpusTitle].text.length - 1) {
+                        frontendState.setTargetTextIndex(frontendState.targetTextIndex + 1);
+                    }
                     return;
             }
 
