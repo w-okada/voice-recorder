@@ -9,16 +9,19 @@ import { AudioController } from "./000_parts/004_AudioController";
 import { ExportController } from "./000_parts/005_ExportController";
 
 export const Frame = () => {
-    const { corpusDataState, frontendState } = useAppState();
+    const { corpusDataState, frontendState, audioControllerState } = useAppState();
 
     useEffect(() => {
         const keyDownHandler = (ev: KeyboardEvent) => {
             console.log("EVENT:", ev);
+            const audioActive = audioControllerState.audioControllerState === "play" || audioControllerState.audioControllerState === "record";
+            const unsavedRecord = audioControllerState.unsavedRecord;
+
             const key = ev.code;
             switch (key) {
                 case "ArrowUp":
                 case "ArrowLeft":
-                    if (frontendState.targetTextIndex > 0) {
+                    if (frontendState.targetTextIndex > 0 && !audioActive && !unsavedRecord) {
                         frontendState.setTargetTextIndex(frontendState.targetTextIndex - 1);
                     }
                     return;
@@ -27,7 +30,7 @@ export const Frame = () => {
                     if (!frontendState.targetCorpusTitle) {
                         return;
                     }
-                    if (frontendState.targetTextIndex < corpusDataState.corpusTextData[frontendState.targetCorpusTitle].text.length - 1) {
+                    if (frontendState.targetTextIndex < corpusDataState.corpusTextData[frontendState.targetCorpusTitle].text.length - 1 && !audioActive && !unsavedRecord) {
                         frontendState.setTargetTextIndex(frontendState.targetTextIndex + 1);
                     }
                     return;
@@ -46,7 +49,7 @@ export const Frame = () => {
         return () => {
             document.removeEventListener("keydown", keyDownHandler);
         };
-    }, [frontendState.targetTextIndex]);
+    }, [frontendState.targetTextIndex, audioControllerState.unsavedRecord, audioControllerState.audioControllerState]);
 
     return (
         <div>

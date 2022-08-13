@@ -8,6 +8,9 @@ export const TextIndexSelector = () => {
     const audioActive = useMemo(() => {
         return audioControllerState.audioControllerState === "play" || audioControllerState.audioControllerState === "record";
     }, [audioControllerState.audioControllerState]);
+    const unsavedRecord = useMemo(() => {
+        return audioControllerState.unsavedRecord;
+    }, [audioControllerState.unsavedRecord]);
 
     const prevButton = useMemo(() => {
         if (!frontendState.targetCorpusTitle) {
@@ -15,7 +18,7 @@ export const TextIndexSelector = () => {
         }
         let className = "";
         let prevIndex = () => {};
-        if (frontendState.targetTextIndex === 0 || audioActive) {
+        if (frontendState.targetTextIndex === 0 || audioActive || unsavedRecord) {
             className = "text-index-selector-button-disable";
         } else {
             className = "text-index-selector-button";
@@ -28,7 +31,7 @@ export const TextIndexSelector = () => {
                 <FontAwesomeIcon icon={["fas", "angle-left"]} size="1x" />
             </div>
         );
-    }, [frontendState.targetCorpusTitle, frontendState.targetTextIndex, audioActive]);
+    }, [frontendState.targetCorpusTitle, frontendState.targetTextIndex, audioActive, unsavedRecord]);
     const nextButton = useMemo(() => {
         if (!frontendState.targetCorpusTitle) {
             return <></>;
@@ -41,7 +44,7 @@ export const TextIndexSelector = () => {
         let className = "";
         let nextIndex = () => {};
         const length = corpus.text.length;
-        if (frontendState.targetTextIndex === length - 1 || audioActive) {
+        if (frontendState.targetTextIndex === length - 1 || audioActive || unsavedRecord) {
             className = "text-index-selector-button-disable";
         } else {
             className = "text-index-selector-button";
@@ -54,7 +57,7 @@ export const TextIndexSelector = () => {
                 <FontAwesomeIcon icon={["fas", "angle-right"]} size="1x" />
             </div>
         );
-    }, [corpusDataState.corpusTextData, frontendState.targetCorpusTitle, frontendState.targetTextIndex, audioActive]);
+    }, [corpusDataState.corpusTextData, frontendState.targetCorpusTitle, frontendState.targetTextIndex, audioActive, unsavedRecord]);
 
     const indexText = useMemo(() => {
         if (!frontendState.targetCorpusTitle) {

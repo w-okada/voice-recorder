@@ -203,7 +203,15 @@ body {
     width: 100px;
     margin: 0 4px 0 4px;
 }
-
+.audio-controller-button-attention {
+    color: #44f;
+    font-weight: 600;
+    background: #faa;
+    border: 1px solid #444;
+    border-radius: 3px;
+    width: 100px;
+    margin: 0 4px 0 4px;
+}
 /* Body -> Controller -> Export Controller */
 .export-controller-button-container {
     display: flex;
