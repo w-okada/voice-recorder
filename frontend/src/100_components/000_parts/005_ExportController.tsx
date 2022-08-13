@@ -75,9 +75,12 @@ export const ExportController = () => {
                   console.warn("ffmpeg is not loaded.");
               };
         return (
-            <div className={className} onClick={onClick}>
-                Export
-            </div>
+            <>
+                <div className={className} onClick={onClick}>
+                    Export
+                </div>
+                {ffmpegState.isFfmpegLoaded ? "" : <div className="export-controller-button-export-memo">Loading...</div>}
+            </>
         );
     }, [corpusDataState, ffmpegState.isFfmpegLoaded]);
 
