@@ -42,7 +42,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
     // [!! 注意 !!] optionStringはffmpegを入れない。純粋にオプション文字列。
     // outputTypeは"audio/wav" など。
     const exec = async (optionString: string, inputFileName: string, outputFileName: string, inputFile: Blob, outputType: string) => {
-        if (!ffmpegRef.current || ffmpegCount.current > 30) {
+        if (!ffmpegRef.current || ffmpegCount.current > 100) {
             console.log("FFMPEG_RENEW!!", ffmpegCount.current, ffmpegRef.current)
             ffmpegCount.current = 0
             if (ffmpegRef.current) {
@@ -58,10 +58,10 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
                 corePath: "./ffmpeg/ffmpeg-core.js",
             });
             await ffmpeg!.load();
-            ffmpeg!.setProgress(({ ratio }) => {
-                console.log("progress:", ratio);
-                setProgress(ratio);
-            });
+            // ffmpeg!.setProgress(({ ratio }) => {
+            //     console.log("progress:", ratio);
+            //     setProgress(ratio);
+            // });
             console.log("ffmpeg is loaded!")
             ffmpegRef.current = ffmpeg
 
