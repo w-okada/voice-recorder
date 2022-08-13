@@ -5,6 +5,7 @@ import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 export type FfmpegState = {
     progress: number
+    isFfmpegLoaded: boolean
 }
 export type FfmpegStateAndMethod = FfmpegState & {
     exec: (optionString: string, inputFileName: string, outputFileName: string, inputFile: Blob, outputType: string) => Promise<Blob>
@@ -12,6 +13,7 @@ export type FfmpegStateAndMethod = FfmpegState & {
 
 export const useFfmepg = (): FfmpegStateAndMethod => {
     const [progress, setProgress] = useState<number>(0)
+    const [isFfmpegLoaded, setIsFfmpegLoaded] = useState<boolean>(false)
     const ffmpeg = useMemo(() => {
         const ffmpeg = createFFmpeg({
             log: true,
@@ -23,6 +25,8 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
                 console.log("progress:", ratio);
                 setProgress(ratio);
             });
+            console.log("ffmpeg is loaded!")
+            setIsFfmpegLoaded(true)
         };
         loadFfmpeg();
         return ffmpeg
@@ -46,6 +50,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
 
     return {
         progress,
+        isFfmpegLoaded,
         exec,
     }
 }

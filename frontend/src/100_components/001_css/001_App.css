@@ -265,6 +265,14 @@ body {
     width: 100px;
     margin: 0 4px 0 4px;
 }
+.export-controller-button-export-disabled {
+    color: #aaa;
+    font-weight: 600;
+    border: 1px solid #444;
+    border-radius: 3px;
+    width: 100px;
+    margin: 0 4px 0 4px;
+}
 /*  */
 /*  */
 /*  */

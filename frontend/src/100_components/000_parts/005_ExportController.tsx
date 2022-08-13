@@ -71,11 +71,17 @@ export const ExportController = () => {
     };
 
     const exportButton = useMemo(() => {
+        const className = ffmpegState.isFfmpegLoaded ? "export-controller-button-export" : "export-controller-button-export-disabled";
+        const onClick = ffmpegState.isFfmpegLoaded
+            ? exportWav
+            : () => {
+                  console.warn("ffmpeg is not loaded.");
+              };
         return (
-            <div className="export-controller-button-export" onClick={exportWav}>
+            <div className={className} onClick={onClick}>
                 Export
             </div>
         );
-    }, [corpusDataState]);
+    }, [corpusDataState, ffmpegState.isFfmpegLoaded]);
     return <div className="export-controller-button-container">{exportButton}</div>;
 };
