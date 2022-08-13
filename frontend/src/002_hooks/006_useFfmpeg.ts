@@ -43,7 +43,8 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
     // outputTypeは"audio/wav" など。
     const exec = async (optionString: string, inputFileName: string, outputFileName: string, inputFile: Blob, outputType: string) => {
         if (!ffmpegRef.current || ffmpegCount.current > 100) {
-            console.log("FFMPEG_RENEW!!")
+            console.log("FFMPEG_RENEW!!", ffmpegCount.current, ffmpegRef.current)
+            ffmpegCount.current = 0
             if (ffmpegRef.current) {
                 try {
                     ffmpegRef.current.exit()
@@ -63,7 +64,7 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
             });
             console.log("ffmpeg is loaded!")
             ffmpegRef.current = ffmpeg
-            ffmpegCount.current = 0
+
         }
         ffmpegCount.current++;
 
