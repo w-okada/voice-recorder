@@ -12,6 +12,12 @@
             "wavPrefix": "recitation",
             "file": "./assets/text/ITA_recitation_all.txt",
             "file_hira": "./assets/text/ITA_recitation_all_hira.txt"
+        },
+        {
+            "title": "wagahaiwa",
+            "wavPrefix": "wagahaiwa",
+            "file": "./assets/text/wagahaiwa.txt",
+            "file_hira": "./assets/text/wagahaiwa_hira.txt"
         }
     ]
 }
