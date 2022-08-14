@@ -69,13 +69,13 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
         }
         ffmpegCount.current++;
 
-        ffmpeg.FS("writeFile", inputFileName, await fetchFile(inputFile));
+        ffmpegRef.current.FS("writeFile", inputFileName, await fetchFile(inputFile));
         const cliArgs = optionString.split(" ");
-        await ffmpeg.run(...cliArgs);
-        const data = ffmpeg.FS("readFile", outputFileName);
+        await ffmpegRef.current.run(...cliArgs);
+        const data = ffmpegRef.current.FS("readFile", outputFileName);
         const blob = new Blob([data.buffer], { type: outputType })
-        ffmpeg.FS("unlink", inputFileName)
-        ffmpeg.FS("unlink", outputFileName)
+        ffmpegRef.current.FS("unlink", inputFileName)
+        ffmpegRef.current.FS("unlink", outputFileName)
 
         return blob
     }
