@@ -81,9 +81,10 @@ body {
 }
 .front-title {
     font-size: 4rem;
+    font-weight: 100;
 }
 .front-description {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     text-align: center;
 }
 .front-description-img {
@@ -102,8 +103,16 @@ body {
     padding: 15px;
     cursor: pointer;
     text-align: center;
-    margin: 100px auto;
+    margin: 100px 0 0 0 auto;
     user-select: none;
+}
+.front-note {
+    font-size: 1rem;
+}
+.front-attention {
+    font-size: 0.8rem;
+    color: #f55;
+    font-weight: 600;
 }
 .front-disclaimer {
     font-size: 0.8rem;
@@ -232,7 +241,7 @@ body {
     margin: 0 4px 0 4px;
 }
 .audio-controller-button-active {
-    color: #f22;
+    color: #444;
     font-weight: 600;
     background: #dfd;
     border: 1px solid #444;
@@ -243,7 +252,8 @@ body {
 .audio-controller-button-attention {
     color: #44f;
     font-weight: 600;
-    background: #faa;
+    cursor: pointer;
+    background: #fcc;
     border: 1px solid #444;
     border-radius: 3px;
     width: 100px;
