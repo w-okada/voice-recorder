@@ -115,6 +115,7 @@ export const AudioController = () => {
                     waveSurferState.loadMusic(vfWavBlob);
 
                     corpusDataState.setRegion(frontendState.targetCorpusTitle!, frontendState.targetTextIndex, 0, 1);
+                    waveSurferState.setRegion(0, 1);
                 };
                 break;
 
