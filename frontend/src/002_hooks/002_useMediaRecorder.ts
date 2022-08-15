@@ -20,6 +20,8 @@ export type MediaRecorderStateAndMethod = MediaRecorderState & {
     getRecordedDataBlobs: () => {
         micWavBlob: Blob;
         vfWavBlob: Blob;
+        micDuration: number;
+        vfDuration: number;
     }
 }
 
@@ -98,7 +100,9 @@ class AudioStreamer extends Duplex {
         floatTo16BitPCM(view, 44, samples); // 波形データ
         console.log(view)
         const audioBlob = new Blob([view], { type: 'audio/wav' });
-        return audioBlob
+        const duration = samples.length / SampleRate
+
+        return { audioBlob, duration }
 
         // var url = URL.createObjectURL(audioBlob);
         // // var a = document.createElement('a');
@@ -230,9 +234,9 @@ export const useMediaRecorder = (): MediaRecorderStateAndMethod => {
         vfAudioStreamer.clearRecordedData()
     }
     const getRecordedDataBlobs = () => {
-        const micWavBlob = micAudioStreamer.getRecordedData()
-        const vfWavBlob = vfAudioStreamer.getRecordedData()
-        return { micWavBlob, vfWavBlob }
+        const { audioBlob: micWavBlob, duration: micDuration } = micAudioStreamer.getRecordedData()
+        const { audioBlob: vfWavBlob, duration: vfDuration } = vfAudioStreamer.getRecordedData()
+        return { micWavBlob, vfWavBlob, micDuration, vfDuration }
     }
 
     const retVal: MediaRecorderStateAndMethod = {

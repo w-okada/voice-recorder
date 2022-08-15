@@ -17,6 +17,7 @@ export type CorpusTextData = {
 
 export type CorpusDataState = {
     corpusTextData: { [title: string]: CorpusTextData }
+    corpusLoaded: boolean
 }
 export type CorpusDataStateAndMethod = CorpusDataState & {
     setWavBlob: (corpusTitle: string, index: number, micBlob: Blob | undefined, vfBlob: Blob | undefined) => void
@@ -32,6 +33,7 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
     const { applicationSetting, indexedDBState } = useAppSetting()
     const textSettings = applicationSetting?.text
     const [corpusTextData, setCorpusTextData] = useState<{ [title: string]: CorpusTextData }>({})
+    const [corpusLoaded, setCorpusLoaded] = useState<boolean>(false)
 
 
     useEffect(() => {
@@ -93,6 +95,7 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
             }
             console.log("new Corpus:::", newCorpusTextData)
             setCorpusTextData(newCorpusTextData)
+            setCorpusLoaded(true)
         }
         loadCorpusText()
     }, [textSettings])
@@ -138,6 +141,7 @@ export const useCorpusData = (): CorpusDataStateAndMethod => {
 
     return {
         corpusTextData,
+        corpusLoaded,
         setWavBlob,
         getWavBlob,
         setRegion,

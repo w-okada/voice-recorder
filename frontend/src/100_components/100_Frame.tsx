@@ -55,14 +55,26 @@ export const Frame = () => {
         waveSurferState.setListener({
             audioprocess: () => {
                 const timeInfos = waveSurferState.getTimeInfos();
-                timeDiv.innerText = `Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                if (timeInfos.totalTime < 1) {
+                    timeDiv.className = "waveform-header-item-warn";
+                    timeDiv.innerText = `WARNING!!! Under 1sec. Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                } else {
+                    timeDiv.className = "waveform-header-item";
+                    timeDiv.innerText = `Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                }
             },
             finish: () => {
                 audioControllerState.setAudioControllerState("stop");
             },
             ready: () => {
                 const timeInfos = waveSurferState.getTimeInfos();
-                timeDiv.innerText = `Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                if (timeInfos.totalTime < 1) {
+                    timeDiv.className = "waveform-header-item-warn";
+                    timeDiv.innerText = `WARNING!!! Under 1sec. Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                } else {
+                    timeDiv.className = "waveform-header-item";
+                    timeDiv.innerText = `Time:${timeInfos.currentTime.toFixed(2)} / ${timeInfos.totalTime.toFixed(2)}`;
+                }
             },
             regionUpdate: (start: number, end: number) => {
                 if (!frontendState.targetCorpusTitle) {

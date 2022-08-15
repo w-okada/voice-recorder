@@ -347,3 +347,8 @@ body {
     padding: 0 5px 0 5px;
     width: 200px;
 }
+.waveform-header-item-warn {
+    padding: 0 5px 0 5px;
+    width: 200px;
+    color: #f00;
+}

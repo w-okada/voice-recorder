@@ -40,7 +40,7 @@ export const AudioController = () => {
     };
     useEffect(() => {
         loadStoredRecord(frontendState.targetCorpusTitle, frontendState.targetTextIndex);
-    }, [frontendState.targetTextIndex, frontendState.targetCorpusTitle]);
+    }, [frontendState.targetTextIndex, frontendState.targetCorpusTitle, corpusDataState.corpusLoaded]);
 
     const { recordButton, stopButton, playButton, keepButton, dismissButton } = useMemo(() => {
         const buttonStates: ButtonStates = {
@@ -108,14 +108,14 @@ export const AudioController = () => {
                 buttonStates.stopAction = () => {
                     audioControllerState.setAudioControllerState("stop");
                     mediaRecorderState.pauseRecord();
-                    const { micWavBlob, vfWavBlob } = mediaRecorderState.getRecordedDataBlobs();
+                    const { micWavBlob, vfWavBlob, vfDuration } = mediaRecorderState.getRecordedDataBlobs();
                     audioControllerState.setTmpMicWavBlob(micWavBlob);
                     audioControllerState.setTmpVfWavBlob(vfWavBlob);
                     audioControllerState.setUnsavedRecord(true);
                     waveSurferState.loadMusic(vfWavBlob);
 
-                    corpusDataState.setRegion(frontendState.targetCorpusTitle!, frontendState.targetTextIndex, 0, 1);
-                    waveSurferState.setRegion(0, 1);
+                    corpusDataState.setRegion(frontendState.targetCorpusTitle!, frontendState.targetTextIndex, 0, vfDuration);
+                    waveSurferState.setRegion(0, vfDuration);
                 };
                 break;
 
