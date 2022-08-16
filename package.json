@@ -1,5 +1,5 @@
 {
-    "name": "ffmpeg-cli-gen",
+    "name": "voice-recorder",
     "version": "1.0.0",
     "description": "",
     "main": "backend/dist/index.js",
