@@ -1,6 +1,6 @@
 import express from "express";
 
-const port: number = Number(process.env.PORT) || 8888;
+const port: number = Number(process.env.PORT) || 18888;
 const app = express();
 
 const setting = require("../../frontend/dist/assets/setting.json");

@@ -83,7 +83,7 @@ class AudioStreamer extends Duplex {
 
         const buffer = new ArrayBuffer(44 + samples.length * 2);
         const view = new DataView(buffer);
-
+        // https://www.youfit.co.jp/archives/1418
         writeString(view, 0, 'RIFF');  // RIFFヘッダ
         view.setUint32(4, 32 + samples.length * 2, true); // これ以降のファイルサイズ
         writeString(view, 8, 'WAVE'); // WAVEヘッダ
@@ -101,6 +101,14 @@ class AudioStreamer extends Duplex {
         console.log(view)
         const audioBlob = new Blob([view], { type: 'audio/wav' });
         const duration = samples.length / SampleRate
+
+        // audioBlob.arrayBuffer().then((buffer) => {
+        //     console.log("DATALENGTH1", samples.length * 2)
+        //     const oldView = new DataView(buffer);
+        //     console.log("DATALENGTH2", view.getUint32(40, true))
+        //     console.log("DATALENGTH3", oldView.getUint32(40, true))
+        // })
+
 
         return { audioBlob, duration }
 

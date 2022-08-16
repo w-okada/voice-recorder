@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const port = Number(process.env.PORT) || 8888;
+const port = Number(process.env.PORT) || 18888;
 const app = (0, express_1.default)();
 const setting = require("../../frontend/dist/assets/setting.json");
 console.log(setting);

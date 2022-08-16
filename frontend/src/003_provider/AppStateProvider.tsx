@@ -5,7 +5,7 @@ import { MediaRecorderStateAndMethod, useMediaRecorder } from "../002_hooks/002_
 import { CorpusDataStateAndMethod, useCorpusData } from "../002_hooks/003_useCorpusData";
 import { AudioControllerStateAndMethod, useAudioControllerState } from "../002_hooks/004_useAudioControllerState";
 import { useWaveSurfer, WaveSurferStateAndMethod } from "../002_hooks/005_useWaveSurfer";
-import { FfmpegStateAndMethod, useFfmepg } from "../002_hooks/006_useFfmpeg";
+// import { FfmpegStateAndMethod, useFfmepg } from "../002_hooks/006_useFfmpeg";
 import { FrontendStateAndMethod, useFrontendState } from "../002_hooks/100_useFrontendState";
 import { useAppSetting } from "./AppSettingProvider";
 
@@ -20,7 +20,7 @@ interface AppStateValue {
     frontendState: FrontendStateAndMethod;
     audioControllerState: AudioControllerStateAndMethod;
     waveSurferState: WaveSurferStateAndMethod;
-    ffmpegState: FfmpegStateAndMethod;
+    // ffmpegState: FfmpegStateAndMethod;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -39,7 +39,7 @@ export const AppStateProvider = ({ children }: Props) => {
     const frontendState = useFrontendState();
     const audioControllerState = useAudioControllerState();
     const waveSurferState = useWaveSurfer();
-    const ffmpegState = useFfmepg();
+    // const ffmpegState = useFfmepg();
 
     useEffect(() => {
         if (!deviceManagerState.audioInputDeviceId) {
@@ -62,7 +62,7 @@ export const AppStateProvider = ({ children }: Props) => {
         frontendState,
         audioControllerState,
         waveSurferState,
-        ffmpegState,
+        // ffmpegState,
     };
 
     return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

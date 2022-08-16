@@ -56,7 +56,7 @@ module.exports = {
     devServer: {
         proxy: {
             "/api": {
-                target: "http://localhost:8888",
+                target: "http://localhost:18888",
             },
         },
         onListening: (server) => {
