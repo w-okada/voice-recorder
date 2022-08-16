@@ -5,9 +5,9 @@ import JSZip from "jszip";
 
 export const ExportController = () => {
     const { frontendState, corpusDataState } = useAppState();
-    const [exporting, setExporting] = useState<boolean>(false);
-    const [objectNum, setObjectNum] = useState<number>(0);
-    const [processedNum, setProcessdNum] = useState<number>(0);
+    const [_exporting, setExporting] = useState<boolean>(false);
+    // const [objectNum, setObjectNum] = useState<number>(0);
+    // const [processedNum, setProcessdNum] = useState<number>(0);
 
     const writeString = (view: DataView, offset: number, string: string) => {
         for (var i = 0; i < string.length; i++) {
@@ -63,6 +63,11 @@ export const ExportController = () => {
         return audioBlob;
     };
 
+    const updateProgress = (totalNum: number, processedNum: number) => {
+        const progress = document.getElementById("export-controller-export-progress") as HTMLDivElement;
+        progress.innerText = `${processedNum}/${totalNum}`;
+    };
+
     const exportWav = async () => {
         if (!frontendState.targetCorpusTitle) {
             return;
@@ -70,32 +75,32 @@ export const ExportController = () => {
         const corpus = corpusDataState.corpusTextData[frontendState.targetCorpusTitle];
         const prefix = corpus.wavPrefix;
         const zip = new JSZip();
-        setObjectNum(corpus.micWavBlob.length * 6);
+        // setObjectNum(corpus.micWavBlob.length * 6);
         let processedNum = 0;
-        setProcessdNum(0);
+        // setProcessdNum(0);
         setExporting(true);
+
+        updateProgress(corpus.micWavBlob.length * 6, 0);
 
         for (let i = 0; i < corpus.micWavBlob.length; i++) {
             const blob = corpus.micWavBlob[i];
             if (!blob) {
+                updateProgress(corpus.micWavBlob.length * 6, (processedNum += 3));
                 continue;
             }
             const fileName = generateWavFileName(prefix, i);
             zip.file(`raw/${fileName}`, blob);
-            processedNum += 1;
-            setProcessdNum(processedNum);
+            updateProgress(corpus.micWavBlob.length * 6, processedNum++);
 
             const wav24Khz = convert48KhzTo24Khz(blob);
             zip.file(`raw24k/${fileName}`, wav24Khz);
-            processedNum += 1;
-            setProcessdNum(processedNum);
+            updateProgress(corpus.micWavBlob.length * 6, processedNum++);
 
             const start = corpus.regions[i][0];
             const end = corpus.regions[i][1];
             const wav24KhzTrim = convert48KhzTo24Khz(blob, start, end);
             zip.file(`rawTrim24k/${fileName}`, wav24KhzTrim);
-            processedNum += 1;
-            setProcessdNum(processedNum);
+            updateProgress(corpus.micWavBlob.length * 6, processedNum++);
 
             // const trimOptions = `-ss ${start} -i in.wav -t ${dur} out.wav`;
             // const trimedBlob = await ffmpegState.exec(trimOptions, "in.wav", "out.wav", blob, "audio/wav");
@@ -113,24 +118,22 @@ export const ExportController = () => {
         for (let i = 0; i < corpus.vfWavBlob.length; i++) {
             const blob = corpus.vfWavBlob[i];
             if (!blob) {
+                updateProgress(corpus.micWavBlob.length * 6, (processedNum += 3));
                 continue;
             }
             const fileName = generateWavFileName(prefix, i);
             zip.file(`vf/${fileName}`, blob);
-            processedNum += 1;
-            setProcessdNum(processedNum);
+            updateProgress(corpus.micWavBlob.length * 6, processedNum++);
 
             const wav24Khz = convert48KhzTo24Khz(blob);
             zip.file(`vf24k/${fileName}`, wav24Khz);
-            processedNum += 1;
-            setProcessdNum(processedNum);
+            updateProgress(corpus.micWavBlob.length * 6, processedNum++);
 
             const start = corpus.regions[i][0];
             const end = corpus.regions[i][1];
             const wav24KhzTrim = convert48KhzTo24Khz(blob, start, end);
             zip.file(`vfTrim24k/${fileName}`, wav24KhzTrim);
-            processedNum += 1;
-            setProcessdNum(processedNum);
+            updateProgress(corpus.micWavBlob.length * 6, processedNum++);
 
             // const start = corpus.regions[i][0];
             // const dur = corpus.regions[i][1] - corpus.regions[i][0];
@@ -177,18 +180,18 @@ export const ExportController = () => {
         // }, [corpusDataState, ffmpegState.isFfmpegLoaded]);
     }, [corpusDataState]);
 
-    const progress = useMemo(() => {
-        if (!exporting) {
-            return <></>;
-        }
+    // const progress = useMemo(() => {
+    //     if (!exporting) {
+    //         return <></>;
+    //     }
 
-        return `${processedNum}/${objectNum}`;
-    }, [exporting, objectNum, processedNum]);
+    //     return `${processedNum}/${objectNum}`;
+    // }, [exporting, objectNum, processedNum]);
 
     return (
         <div className="export-controller-button-container">
             {exportButton}
-            {progress}
+            <div id="export-controller-export-progress" className="export-controller-export-progress"></div>
         </div>
     );
 };
