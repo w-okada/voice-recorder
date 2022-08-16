@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFFmpeg, fetchFile, FFmpeg } from "@ffmpeg/ffmpeg";
 
 
@@ -14,7 +14,7 @@ export type FfmpegStateAndMethod = FfmpegState & {
 export const useFfmepg = (): FfmpegStateAndMethod => {
     const [progress, setProgress] = useState<number>(0)
     const [isFfmpegLoaded, setIsFfmpegLoaded] = useState<boolean>(false)
-    const ffmpeg = useMemo(() => {
+    useEffect(() => {
         const ffmpeg = createFFmpeg({
             log: true,
             corePath: "./ffmpeg/ffmpeg-core.js",
@@ -29,8 +29,9 @@ export const useFfmepg = (): FfmpegStateAndMethod => {
             setIsFfmpegLoaded(true)
         };
         loadFfmpeg();
-        return ffmpeg
+
     }, [])
+
 
     const ffmpegRef = useRef<FFmpeg>()
     const ffmpegCount = useRef<number>(0)
