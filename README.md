@@ -8,6 +8,5 @@ Corpus Voice Recorder
 
 使用方法は[wiki](https://github.com/w-okada/voice-recorder/wiki)を参照してください。
 
-アプリは[こちら](https://corpus-voice-recorder.herokuapp.com/frontend/index.html)から使用できます。
-(herokuにデプロイしているので、起動少し時間がかかるかもしれません。1分くらい？？)
-
+アプリは[こちら](https://w-okada.github.io/voice-recorder/)から使用できます。
+(右上のマイク入力の設定を忘れがちなのでお気をつけて。)
