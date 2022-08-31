@@ -15,6 +15,7 @@
         "deploy": "git push heroku master",
         "start": "node  backend/dist/index.js",
         "watch": "webpack-dev-server  --config webpack.frontend.config.js",
+        "copy:frontend": "cp -r frontend/dist/* docs/",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
