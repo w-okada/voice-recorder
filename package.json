@@ -16,6 +16,7 @@
         "start": "node  backend/dist/index.js",
         "watch": "webpack-dev-server  --config webpack.frontend.config.js",
         "copy:frontend": "cp -r frontend/dist/* docs/",
+        "create:demo": "run-p copy:frontend",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
